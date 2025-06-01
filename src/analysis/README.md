@@ -51,7 +51,7 @@ HOLDING = N: The parcel is not under a holding designation and is free to develo
 
 - Many zoning bylaws will have parking requirements for residential properties, particularly for higher-density developments like multiplex housing. Check the by-law for required parking spaces per unit, as this could influence the feasibility of your design.
 
-##Data Sources & Data Inventory
+## Data Sources & Data Inventory
 Toronto OpenData Portal
 
 - [Property Boundary or Parcel](https://open.toronto.ca/dataset/property-boundaries/)
