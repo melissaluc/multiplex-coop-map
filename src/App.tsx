@@ -1,8 +1,9 @@
 import "./App.css";
 import React from "react";
 import { AspectRatio, Heading, Box } from "@chakra-ui/react";
-import Map from "./components/Map";
-import InputForm from "./components/InputForm";
+import Map from "./components/ui/Map";
+import InputForm from "./components/ui/InputForm";
+
 function App() {
   return (
     <React.Fragment>

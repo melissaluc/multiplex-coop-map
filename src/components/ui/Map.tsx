@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 // import PropertyBoundary from '../database/sample_data/PropertyBoundaries.geojson' assert { type: 'json' }
 
-export default function Map() {
+export default function Map(): React.JSX.Element {
   const longitude = -79.440028;
   const latitude = 43.770141;
 

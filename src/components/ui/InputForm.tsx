@@ -8,7 +8,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
-export default function InputForm() {
+export default function InputForm(): React.JSX.Element {
   return (
     <Fieldset.Root size="lg" maxW="md">
       <Stack>

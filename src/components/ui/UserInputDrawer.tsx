@@ -3,7 +3,7 @@
 import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
 import { useState } from "react";
 
-export default function UserInputDrawer() {
+export default function UserInputDrawer(): React.JSX.Element {
   const [open, setOpen] = useState(false);
 
   return (
