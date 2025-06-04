@@ -2,7 +2,6 @@ import "./App.css";
 import React from "react";
 import { AspectRatio, Heading, Box } from "@chakra-ui/react";
 import Map from "./components/Map";
-import UserInputDrawer from "./components/UserInputDrawer";
 import InputForm from "./components/InputForm";
 function App() {
   return (
@@ -11,7 +10,6 @@ function App() {
         Multiplex Coop Housing - Potential Property Sites
       </Heading>
       <Box>
-        {/* <UserInputDrawer /> */}
         <Box
           flexDir={{ base: "column", md: "row-reverse" }}
           display={"flex"}

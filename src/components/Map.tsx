@@ -1,5 +1,4 @@
-import React from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 // import PropertyBoundary from '../database/sample_data/PropertyBoundaries.geojson' assert { type: 'json' }
 
 export default function Map() {
