@@ -1,12 +1,15 @@
 # Objective
+
 Geospatial query for property boundaries that meet multiplex coop building's requirements:
 
 # Methodology
+
 HOLDING = Y: The parcel has a Holding Zone designation. Development is not allowed until specific conditions are met or the holding provision is lifted.
 
 HOLDING = N: The parcel is not under a holding designation and is free to develop according to the applicable zoning by-law regulations.
 
 ## Key Zoning Considerations for Multiplex Housing:
+
 ### Zoning Category (ZN_ZONE):
 
 - Residential Zones: Properties zoned for residential use are most likely to permit multiplex housing. Look for properties in these zones:
@@ -52,6 +55,7 @@ HOLDING = N: The parcel is not under a holding designation and is free to develo
 - Many zoning bylaws will have parking requirements for residential properties, particularly for higher-density developments like multiplex housing. Check the by-law for required parking spaces per unit, as this could influence the feasibility of your design.
 
 ## Data Sources & Data Inventory
+
 Toronto OpenData Portal
 
 - [Property Boundary or Parcel](https://open.toronto.ca/dataset/property-boundaries/)
@@ -64,6 +68,7 @@ OpenStreetMap
 - GTHA Boundary
 
 ## Query
+
 ```
 SELECT
 zzc.OBJECTID, -- Unique system identifier
@@ -75,10 +80,7 @@ zzc.UNITS, -- Permitted number of dwelling units
 zzc.DENSITY, -- Permitted maximum density (FSI)
 zzc.COVERAGE, -- Maximum lot coverage (%)
 zzc.FSI_TOTAL, -- Total permitted FSI
-zzc.PRCNT_COMM, -- Maximum FSI for commercial use (if applicable)
 zzc.PRCNT_RES, -- Maximum FSI for residential use (if applicable)
-zzc.PRCNT_EMMP, -- Maximum FSI for employment uses (if applicable)
-zzc.PRCNT_OFFC, -- Maximum FSI for office uses (if applicable)
 zzc.ZN_EXCPTN, -- If there's an exemption in the zone (Y/N)
 zzc.EXCPTN_NO, -- Exemption number (if applicable)
 zzc.STAND_SET, -- Design typologies (if applicable)
@@ -101,10 +103,14 @@ ZONING_LOT_COVERAGE zlc ON zzc.OBJECTID = zlc.OBJECTID
 JOIN
 ZONING_HEIGHT zh ON zzc.OBJECTID = zh.OBJECTID
 WHERE
-zzc.GEN_ZONE = 'Residential' -- Example: Residential zone for multiplex housing
+zzc.GEN_ZONE IN (0, 101, 6) -- Example: Residential zone for multiplex housing
 AND zzc.ZN_STATUS IN (0, 1, 2, 3, 4, 6) -- Zones that are valid in the by-law
 AND zzc.HOLDING = 'N' -- Only include parcels without a Holding Zone
-AND zzc.ZN_AREA >= 500 -- Minimum lot area (example: 500 m²)
-AND zzc.FRONTAGE >= 15 -- Minimum lot frontage (example: 15 meters)
+AND zzc.ZN_AREA >= ${LOT_AREA} -- Minimum lot area (example: 500 m²)
+AND zzc.FRONTAGE >= ${LOT_FRONTAGE} -- Minimum lot frontage (example: 15 meters)
+AND zh.HT_STORIES IN (2,3,4,5,6)
+AND zh.HT_HEIGHT >= ${BUILDING_HEIGHT}
+AND zlc.PRCNT_CVER >= ${BUILDING_FOOTPRINT_COVERAGE}
+AND zzc.PRCNT_RES >= {FSI}
 
 ```

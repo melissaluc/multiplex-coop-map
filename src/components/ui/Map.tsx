@@ -2,9 +2,19 @@ import { MapContainer, TileLayer } from "react-leaflet";
 // import PropertyBoundary from '../database/sample_data/PropertyBoundaries.geojson' assert { type: 'json' }
 
 export default function Map(): React.JSX.Element {
+  // coords for center of map
+  // TODO: replace with dynamic value from data convex hull centroid
   const longitude = -79.440028;
   const latitude = 43.770141;
 
+  /*
+   * Proposed Layers
+   * Points:
+   *  - Property Boundaries
+   * Polygons:
+   * - Property Boundaries
+   * - Zoning By-Laws
+   */
   return (
     <MapContainer
       center={[latitude, longitude]}
