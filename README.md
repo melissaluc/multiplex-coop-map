@@ -6,6 +6,7 @@
 - React
 - TypeScript
 - DuckDB
+- Hugging Face
 
 ## Data Sources & Data Inventory
 - Toronto OpenData Portal
