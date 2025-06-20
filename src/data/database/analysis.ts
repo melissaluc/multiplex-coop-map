@@ -1,5 +1,8 @@
 import { createDuckDB } from "./DuckDBClient";
+import { uploadFile } from "@huggingface/hub";
+import { readFileSync } from "fs";
 
+const HF_TOKEN = process.env.HF_TOKEN;
 const connection = await createDuckDB();
 
 const basePath = "src/data/sample_data";
@@ -15,8 +18,8 @@ const filteredPropertyBoundariesPath = `${resultsBasePath}/PropertyBoundaries.pa
 async function getCommonPropertyBoundaries() {
   // reduce property boundaries records by filtering for FEATURE_TYPE=COMMON for land that can be developed on
   await connection.run(`
-        CREATE TEMP TABLE filtered_pb AS 
-        SELECT "STATEDAREA", "PLAN_NAME", "PLAN_TYPE", "ADDRESS_NUMBER", "LINEAR_NAME_FULL", "geometry", "FEATURE_TYPE" 
+        CREATE TEMP TABLE filtered_pb AS
+        SELECT "STATEDAREA", "PLAN_NAME", "PLAN_TYPE", "ADDRESS_NUMBER", "LINEAR_NAME_FULL", "geometry", "FEATURE_TYPE"
         FROM read_parquet('${basePath}/Property_Boundaries_4326.parquet')
         WHERE FEATURE_TYPE = 'COMMON'
     `);
@@ -276,7 +279,7 @@ async function getPropertyBoundariesOnSpatialJoin(
 
   const queryOutNull = `
     CREATE TEMP TABLE spatial_join_cleaned AS
-    SELECT * 
+    SELECT *
     FROM spatial_join
     WHERE ${whereNotNullClause};
     `;
@@ -304,6 +307,15 @@ COPY (
 ) TO '${resultsBasePath}/PropertyBoundaries_Result.csv' (FORMAT 'csv', HEADER);
 
 `);
+
+await uploadFile({
+    repo: "ProjectMultiplexCoop/QueryResult",
+    accessToken: HF_TOKEN,
+    file: {
+        path: `${resultsBasePath}/PropertyBoundaries_Result.csv`,
+        content: new Blob([readFileSync(`${resultsBasePath}/PropertyBoundaries_Result.csv`)], { type: "text/csv" })
+    }
+});
 
 // Close single connection but keep db running
 // connection.disconnectSync();
