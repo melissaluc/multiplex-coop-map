@@ -8,9 +8,7 @@ type ExportDataButtonProps = {
   setUnhide?: boolean;
 };
 
-export default function ExportDataButton({
-  setUnhide,
-}: ExportDataButtonProps): React.JSX.Element {
+export default function ExportDataButton({}: ExportDataButtonProps): React.JSX.Element {
   // TODO: Figure out where to trigger disabled on the entire form element
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   return (

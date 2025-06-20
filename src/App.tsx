@@ -2,7 +2,7 @@ import "./App.css";
 import React from "react";
 import { AspectRatio, Heading, Box } from "@chakra-ui/react";
 import Map from "./components/ui/Map";
-import InputForm from "./components/ui/InputForm";
+import InputForm from "./components/ui/InputForm/InputForm";
 import { Toaster } from "./components/ui/toaster";
 function App() {
   return (
