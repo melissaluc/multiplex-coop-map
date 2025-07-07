@@ -2,6 +2,7 @@
 - This repo contains the project geospatial analysis and map component
 - 🔗 [Demo Link](https://multiplex-coop-map.onrender.com/)
 - [Data Set(s)](https://huggingface.co/ProjectMultiplexCoop) stored on Hugging Face
+- [Backend Repo](https://github.com/melissaluc/multiplex-coop-map-server/tree/main)
 
 # Technology Stack
 - React
