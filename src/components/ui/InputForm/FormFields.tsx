@@ -1,34 +1,42 @@
-import {
-  Button,
-  Field,
-  Fieldset,
-  For,
-  Input,
-  NativeSelect,
-  Stack,
-  Box,
-  SegmentGroup,
-  VStack,
-} from "@chakra-ui/react";
+import { Field, For, Input, NativeSelect } from "@chakra-ui/react";
 import {
   FieldPickControl,
   type FieldPickControlProps,
 } from "./FieldPickControl";
 import React, { useState } from "react";
 
-type FieldPickControlFieldProps = FieldPickControlProps & {
+export type FieldPickControlFieldProps = FieldPickControlProps & {
   fieldName: string | undefined;
   fieldLabel: string;
 };
 
-type DropDownFieldProps = {
-  optionsList: Array<string | number>;
+export type DropDownFieldProps = {
+  optionsList: Array<
+    | string
+    | number
+    | boolean
+    | { show: string; value: string | number | boolean }
+  >;
   fieldLabel: string;
   fieldName?: string;
 };
-type TextFieldProps = {
+export type TextFieldProps = {
   fieldLabel: string;
   fieldName?: string;
+};
+
+export type GetInputTypeProps = {
+  inputType: string;
+  optionsList?: Array<
+    | string
+    | number
+    | boolean
+    | { show: string; value: string | number | boolean }
+  >;
+  fieldLabel?: string;
+  fieldName?: string;
+  selectValue?: number | string | null;
+  handleChangeValue?: (value: string) => void;
 };
 
 function DropDownField({
@@ -40,15 +48,25 @@ function DropDownField({
   if (field_Name === undefined) {
     field_Name = fieldLabel.toLowerCase().replace(/\s+/g, "_");
   }
+
+  // Normalize options to { label, value } and filter out booleans
+  const normalizedOptions = optionsList
+    .filter((opt) => typeof opt !== "boolean")
+    .map((opt) =>
+      typeof opt === "object" && "show" in opt
+        ? { label: opt.show, value: String(opt.value) }
+        : { label: String(opt), value: String(opt) }
+    );
+
   return (
     <Field.Root>
       <Field.Label>{fieldLabel}</Field.Label>
       <NativeSelect.Root>
         <NativeSelect.Field name={field_Name}>
-          <For each={optionsList}>
+          <For each={normalizedOptions}>
             {(item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item.value} value={item.value}>
+                {item.label}
               </option>
             )}
           </For>
@@ -71,6 +89,21 @@ function TextField({
   );
 }
 
+function normalizeOptions(
+  rawOptions: Array<
+    | string
+    | number
+    | boolean
+    | { show: string; value: string | number | boolean }
+  >
+): { label: string; value: string }[] {
+  return rawOptions.map((opt) =>
+    typeof opt === "object" && "show" in opt
+      ? { label: opt.show, value: String(opt.value) }
+      : { label: String(opt), value: String(opt) }
+  );
+}
+
 function FieldPickControlField({
   fieldLabel,
   fieldName,
@@ -82,22 +115,13 @@ function FieldPickControlField({
     <Field.Root>
       <Field.Label>{fieldLabel || fieldName}</Field.Label>
       <FieldPickControl
-        optionsList={optionsList}
-        selectValue={selectValue}
+        optionsList={normalizeOptions(optionsList)}
+        selectValue={selectValue ?? undefined}
         handleChangeValue={handleChangeValue}
       />
     </Field.Root>
   );
 }
-
-type GetInputTypeProps = {
-  inputType: string;
-  optionsList?: Array<string | number>;
-  fieldLabel?: string;
-  fieldName?: string;
-  selectValue?: number | string | null;
-  handleChangeValue?: (value: string) => void;
-};
 
 export default function RenderField({
   inputType,
@@ -124,7 +148,7 @@ export default function RenderField({
           fieldLabel={fieldLabel}
           fieldName={fieldName}
           optionsList={optionsList}
-          selectValue={selectValue}
+          selectValue={selectValue ?? undefined}
           handleChangeValue={handleChangeValue}
         />
       );

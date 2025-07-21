@@ -1,27 +1,86 @@
 import {
   Button,
-  Field,
   Fieldset,
-  For,
-  Input,
-  NativeSelect,
   Stack,
   Box,
-  SegmentGroup,
+  Field,
+  FieldRoot,
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import ExportDataButton from "../ExportDataButton";
-import { fields } from "./fieldsCOnfig";
+import { fields } from "./fieldsConfig";
+import type {
+  FieldGroup,
+  BaseField,
+  FieldType,
+  OptionField,
+} from "./fieldsConfig";
 import RenderField from "./FormFields";
-import RenderGroup from "./FieldGroup";
+import type { GetInputTypeProps } from "./FormFields";
+
+type RenderFieldType = BaseField & GetInputTypeProps;
+type RenderGroupType = FieldGroup & GetInputTypeProps;
+
+function isBaseField(item: FieldType): item is RenderFieldType {
+  return "fieldName" in item;
+}
+
+function isGroupField(item: FieldType): item is RenderGroupType {
+  return "groupName" in item && "fields" in item;
+}
 
 export default function InputForm(): React.JSX.Element {
   const [unhideExportBtn, setUnhideExportBtn] = useState<boolean>(true);
   const [heightFieldPick, setHeightFieldPick] = useState<string>("Height");
+  const [disableFilter, setDisableFilter] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    filters: {
+      ParkingZoneOverlay: false,
+    },
+    queries: {
+      ZoningHeightOverlay: {
+        HT_STORIES: 6,
+        HT_LABEL: null,
+      },
+      ZoningArea: {
+        GEN_ZONE: [0, 101],
+        FRONTAGE: 10,
+        ZN_AREA: 190,
+        UNITS: 6,
+        FSI_TOTAL: null,
+        AREA_UNITS: null,
+        PRCNT_RES: null,
+      },
+    },
+  });
+
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setUnhideExportBtn(false);
+    setDisableFilter(true);
+    console.log("Running overlay analysis");
+    (async () => {
+      setDisableFilter(true);
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/filter-properties`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+        console.log(await response.json());
+        console.log("Property boundaries filtered successfully");
+      } catch (error) {
+        console.error("Error filtering property boundaries:", error);
+      } finally {
+        setDisableFilter(false);
+      }
+    })();
   };
 
   const handleOnChangeHeightFieldPick = (value: string) => {
@@ -40,31 +99,65 @@ export default function InputForm(): React.JSX.Element {
         </Stack>
 
         <Fieldset.Content>
-          {fields.map((item) => {
-            if (item.fieldName) {
-              return (
-                <RenderField
-                  key={item.fieldName}
-                  inputType={item.inputType}
-                  optionsList={item.optionsList}
-                  fieldLabel={item.fieldLabel}
-                  fieldName={item.fieldName}
-                  selectValue={item.selectValue}
-                  handleChangeValue={item.handleChangeValue}
-                />
-              );
-            }
-            if (item.groupName) {
-              return (
-                <RenderGroup
-                  key={item.groupName}
-                  groupName={item.groupName}
-                  groupFields={item.groupFields}
-                />
-              );
-            }
-            return null;
-          })}
+          <VStack spaceY={10}>
+            {fields.map((item) => {
+              if (isBaseField(item)) {
+                return (
+                  <RenderField
+                    key={item.fieldName}
+                    inputType={item.inputType || ""}
+                    optionsList={((item as OptionField).options ?? []).filter(
+                      (opt): opt is string | number =>
+                        typeof opt === "string" || typeof opt === "number"
+                    )}
+                    fieldLabel={item.fieldLabel}
+                    fieldName={item.fieldName}
+                    selectValue={item.selectValue || ""}
+                    handleChangeValue={item.handleChangeValue}
+                  />
+                );
+              }
+
+              if (isGroupField(item)) {
+                return (
+                  <Field.Root key={item.groupName}>
+                    <Box
+                      border={"1px solid"}
+                      borderColor="gray.200"
+                      p={4}
+                      width={"100%"}
+                    >
+                      <Field.Label color={"gray.600"}>
+                        {item.groupLabel}
+                      </Field.Label>
+                      {item.fields.map((subItem) => {
+                        if (isBaseField(subItem)) {
+                          return (
+                            <RenderField
+                              key={subItem.fieldName}
+                              inputType={subItem.inputType || ""}
+                              optionsList={(
+                                (subItem as OptionField).options ?? []
+                              ).filter(
+                                (opt): opt is string | number =>
+                                  typeof opt === "string" ||
+                                  typeof opt === "number"
+                              )}
+                              fieldLabel={subItem.fieldLabel}
+                              fieldName={subItem.fieldName}
+                              selectValue={subItem.selectValue || ""}
+                              handleChangeValue={subItem.handleChangeValue}
+                            />
+                          );
+                        }
+                        return null;
+                      })}
+                    </Box>
+                  </Field.Root>
+                );
+              }
+            })}
+          </VStack>
         </Fieldset.Content>
         <Box
           display="flex"
@@ -73,7 +166,7 @@ export default function InputForm(): React.JSX.Element {
           gap={2}
           mt={4}
         >
-          <Button type="submit" alignSelf="flex-start">
+          <Button disabled={disableFilter} type="submit" alignSelf="flex-start">
             Filter
           </Button>
           {/* TODO: Add export data (GeoJSON first then add options in future) feature */}

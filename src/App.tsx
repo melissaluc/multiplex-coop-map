@@ -7,8 +7,8 @@ import { Toaster } from "./components/ui/toaster";
 function App() {
   return (
     <React.Fragment>
-      <Heading as="h1" size="md" mb={4}>
-        Multiplex Coop Housing
+      <Heading as="h1" size="md" mb={4} textAlign="left">
+        Toronto Multiplex Coop Housing
       </Heading>
       <Box>
         <Box

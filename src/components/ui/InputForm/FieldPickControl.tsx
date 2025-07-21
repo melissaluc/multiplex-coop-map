@@ -1,21 +1,15 @@
-import {
-  Button,
-  Field,
-  Fieldset,
-  For,
-  Input,
-  NativeSelect,
-  Stack,
-  Box,
-  SegmentGroup,
-  VStack,
-} from "@chakra-ui/react";
+import { For, Stack, SegmentGroup, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
 
 export type FieldPickControlProps = {
-  optionsList: Array<string | number>;
-  selectValue?: string | number | null;
+  optionsList: Array<string | number | OptionsListObject>;
+  selectValue?: string | number;
   handleChangeValue?: (value: string) => void;
+};
+
+type OptionsListObject = {
+  show: string;
+  value: boolean;
 };
 
 export function FieldPickControl({
@@ -23,25 +17,28 @@ export function FieldPickControl({
   selectValue,
   handleChangeValue,
 }: FieldPickControlProps): React.JSX.Element {
-  const [value, setValue] = useState<string>(selectValue ?? optionsList[0]);
+  const [fieldValue, setFieldValue] = useState(selectValue ?? optionsList[0]);
   const handleOnValueChange = (e: SegmentGroup.ValueChangeDetails) => {
     const newValue = e.value;
     if (typeof newValue === "string") {
-      setValue(newValue);
+      setFieldValue(newValue);
       handleChangeValue?.(newValue);
     }
   };
   return (
     <Stack gap="5" align="flex-start">
       <For each={optionsList}>
-        {(option) => (
-          <VStack key={option} align="flex-start">
+        {() => (
+          // change key b/s not unique
+          <VStack align="flex-start">
             <SegmentGroup.Root
-              value={value}
+              value={fieldValue?.toString()} // see how you can manage the types
               onValueChange={(e) => handleOnValueChange(e)}
             >
               <SegmentGroup.Indicator />
-              <SegmentGroup.Items items={optionsList} />
+              <SegmentGroup.Items
+                items={optionsList.map((opt) => opt.show.toString())} // see how you can manage the types
+              />
             </SegmentGroup.Root>
           </VStack>
         )}
