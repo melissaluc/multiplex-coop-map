@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.19.2",
+    "@duckdb/duckdb-wasm": "^1.29.1-dev132.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@huggingface/hub": "^2.2.0",
@@ -20,6 +21,7 @@
     "@turf/turf": "^7.2.0",
     "@types/geojson": "^7946.0.16",
     "@types/leaflet": "^1.9.18",
+    "chroma-js": "^3.1.2",
     "dataframe-js": "^1.4.4",
     "dotenv": "^16.5.0",
     "leaflet": "^1.9.4",
@@ -28,6 +30,8 @@
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
+    "react-leaflet-markercluster": "^5.0.0-rc.0",
+    "terraformer-wkt-parser": "^1.2.1",
     "tsx": "^4.19.4"
   },
   "devDependencies": {

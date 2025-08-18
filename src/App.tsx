@@ -8,7 +8,7 @@ function App() {
   return (
     <React.Fragment>
       <Heading as="h1" size="md" mb={4} textAlign="left">
-        Toronto Multiplex Coop Housing
+        Toronto Zoning By-law Property Search
       </Heading>
       <Box>
         <Box
